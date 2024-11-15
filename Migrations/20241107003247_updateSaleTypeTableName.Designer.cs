@@ -3,6 +3,7 @@ using System;
 using App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace app.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241107003247_updateSaleTypeTableName")]
+    partial class updateSaleTypeTableName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,6 +95,9 @@ namespace app.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SaleTypeId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SalesTypeId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -104,7 +110,7 @@ namespace app.Migrations
 
                     b.HasIndex("SaleTypeId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sale");
                 });
 
             modelBuilder.Entity("app.Models.SaleItem", b =>
@@ -132,7 +138,7 @@ namespace app.Migrations
 
                     b.HasIndex("SaleId");
 
-                    b.ToTable("SaleItems");
+                    b.ToTable("SaleItem");
                 });
 
             modelBuilder.Entity("app.Models.SaleType", b =>
@@ -159,9 +165,7 @@ namespace app.Migrations
 
                     b.HasOne("app.Models.SaleType", null)
                         .WithMany("Sales")
-                        .HasForeignKey("SaleTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SaleTypeId");
                 });
 
             modelBuilder.Entity("app.Models.SaleItem", b =>

@@ -3,6 +3,7 @@ using System;
 using App.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace app.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241107003716_deleteSaleItemProductIdAndSaleIdFields")]
+    partial class deleteSaleItemProductIdAndSaleIdFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,14 +116,12 @@ namespace app.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ProductId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<string>("SaleId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal>("UnitPrice")
@@ -168,15 +169,11 @@ namespace app.Migrations
                 {
                     b.HasOne("app.Models.Product", null)
                         .WithMany("Sales")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("app.Models.Sale", null)
                         .WithMany("Items")
-                        .HasForeignKey("SaleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SaleId");
                 });
 
             modelBuilder.Entity("app.Models.Customer", b =>
