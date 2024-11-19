@@ -9,7 +9,7 @@ namespace app.Mappers
 {
     public static class CustomerMappers
     {
-        public static CustomerDTO ToDTO(this Customer customer)
+        public static CustomerDTO ToDTO(this Customer customer, bool includeSales = false)
         {
             var dto = new CustomerDTO
             {
@@ -19,10 +19,10 @@ namespace app.Mappers
 
             };
 
-            // if (customer.Sales != null)
-            // {
-            //     dto.Sales = customer.Sales.Select(s => s.ToDTO()).ToList();
-            // }
+            if (includeSales && customer.Sales != null)
+            {
+                dto.Sales = customer.Sales.Select(s => s.ToDTO()).ToList();
+            }
 
             return dto;
         }
