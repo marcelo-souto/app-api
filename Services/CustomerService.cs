@@ -15,9 +15,13 @@ namespace app.Services
             _context = context;
         }
 
-        public async Task<List<CustomerDTO>> GetAll()
+        public async Task<List<CustomerDTO>> GetAll(string? name)
         {
-            var customers = await _context.Customers.ToListAsync();
+            var customers = await _context.Customers
+                                                .Where(
+                                                    c => name == null ||
+                                                    c.Name.ToLower().Contains(name.ToLower()))
+                                                .ToListAsync();
             return customers.Select(c => c.ToDTO()).ToList();
         }
 
@@ -53,9 +57,12 @@ namespace app.Services
 
         public async Task<CustomerDTO?> GetById(string id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers
+                                                .Include(c => c.Sales)
+                                                    .ThenInclude(s => s.Items)
+                                                        .FirstOrDefaultAsync(c => c.Id == id);
             if (customer == null) return null;
-            return customer.ToDTO();
+            return customer.ToDTO(includeSales: true);
         }
 
         public async Task<Customer?> Delete(string id)
