@@ -17,9 +17,13 @@ namespace app.Services
             _context = context;
         }
 
-        public async Task<List<ProductDTO>> GetAll()
+        public async Task<List<ProductDTO>> GetAll(string? name)
         {
-            var products = await _context.Products.ToListAsync();
+            var products = await _context.Products
+                                            .Where(
+                                                    product => name == null ||
+                                                    product.Name.ToLower().Contains(name.ToLower()))
+                                            .ToListAsync();
             return products.Select(product => product.ToDTO()).ToList();
         }
 
@@ -59,8 +63,11 @@ namespace app.Services
 
             var existingProduct = await _context.Products
                                                 .FirstOrDefaultAsync(product => product.Name == updateProductDTO.Name);
-
-            if (existingProduct != null) throw new ConflictException("Product already exists.");
+                                                
+            if (
+                existingProduct != null && 
+                existingProduct.Id != id
+            ) throw new ConflictException("Product already exists.");
 
             if (updateProductDTO.Price < 0) throw new ValidationException("Price must be greater than 0.");
 
@@ -71,6 +78,15 @@ namespace app.Services
             await _context.SaveChangesAsync();
 
             return product.ToDTO();
+        }
+
+        public async Task Delete(string id)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(product => product.Id == id);
+            if (product == null) throw new NotFoundException("Product not found.");
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
         }
 
     }
