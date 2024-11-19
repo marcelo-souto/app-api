@@ -24,9 +24,9 @@ namespace app.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] string name)
         {
-            var products = await _productService.GetAll();
+            var products = await _productService.GetAll(name);
             return Ok(products);
         }
 
@@ -85,6 +85,24 @@ namespace app.Controllers
             catch (ValidationException e)
             {
                 return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            try
+            {
+                await _productService.Delete(id);
+                return NoContent();
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
             }
             catch (Exception e)
             {
