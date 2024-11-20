@@ -59,9 +59,12 @@ namespace app.Services
         {
             var customer = await _context.Customers
                                                 .Include(c => c.Sales)
+                                                    .ThenInclude(s => s.SaleType)
+                                                .Include(c => c.Sales)
                                                     .ThenInclude(s => s.Items)
                                                         .ThenInclude(i => i.Product)
                                                             .FirstOrDefaultAsync(c => c.Id == id);
+
             if (customer == null) return null;
             return customer.ToDTO(includeSales: true);
         }
