@@ -15,7 +15,7 @@ namespace app.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCustomers([FromQuery] string name)
+        public async Task<IActionResult> GetCustomers([FromQuery] string? name)
         {
             var customers = await _customerService.GetAll(name);
             return Ok(customers);

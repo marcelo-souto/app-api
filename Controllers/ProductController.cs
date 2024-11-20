@@ -24,7 +24,7 @@ namespace app.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] string name)
+        public async Task<IActionResult> GetProducts([FromQuery] string? name)
         {
             var products = await _productService.GetAll(name);
             return Ok(products);
